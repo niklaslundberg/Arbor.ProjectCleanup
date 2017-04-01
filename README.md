@@ -1,0 +1,1 @@
+# Clean .NET temp folders
