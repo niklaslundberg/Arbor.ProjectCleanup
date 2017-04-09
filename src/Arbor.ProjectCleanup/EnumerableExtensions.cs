@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace Arbor.ProjectCleanup
 
             if (enumerable is ImmutableArray<T>)
             {
-                return (ImmutableArray<T>) enumerable;
+                return (ImmutableArray<T>)enumerable;
             }
 
             return enumerable.ToImmutableArray();
@@ -23,6 +24,16 @@ namespace Arbor.ProjectCleanup
 
         public static T[] Add<T>(this T[] array, params T[] items)
         {
+            if (array == null)
+            {
+                throw new ArgumentNullException(nameof(array));
+            }
+
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+
             List<T> list = array.ToList();
 
             list.AddRange(items);

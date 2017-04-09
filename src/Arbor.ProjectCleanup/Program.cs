@@ -1,12 +1,14 @@
-﻿using System.Text;
+﻿using System.Collections.Immutable;
 
 namespace Arbor.ProjectCleanup
 {
-    class Program
+    internal class Program
     {
-        static int Main(string[] args)
+        private static int Main(string[] args)
         {
-            ExitCode exitCode = App.RunAsync(args.Add(ConfigurationKeys.WhatIf).SafeToImmutableArray()).Result;
+            ImmutableArray<string> allArgs = args?.Add(ConfigurationKeys.WhatIf).SafeToImmutableArray() ?? ImmutableArray<string>.Empty;
+
+            ExitCode exitCode = App.RunAsync(allArgs).Result;
 
             return exitCode.Result;
         }

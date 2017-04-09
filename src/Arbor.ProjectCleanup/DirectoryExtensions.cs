@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
@@ -8,12 +7,19 @@ namespace Arbor.ProjectCleanup
 {
     public static class DirectoryExtensions
     {
-        public static ImmutableArray<DirectoryInfo> GetSubDirectories(this DirectoryInfo dir, SearchOption searchOption, params string[] names)
+        public static ImmutableArray<DirectoryInfo> GetSubDirectories(
+            this DirectoryInfo dir,
+            SearchOption searchOption,
+            params string[] names)
         {
             if (names == null)
+            {
                 throw new ArgumentNullException(nameof(names));
+            }
 
-            ImmutableArray<DirectoryInfo> subDirectories = names.SelectMany(name => dir.GetDirectories(name, searchOption: searchOption)).ToImmutableArray();
+            ImmutableArray<DirectoryInfo> subDirectories = names
+                .SelectMany(name => dir.GetDirectories(name, searchOption: searchOption))
+                .ToImmutableArray();
 
             return subDirectories;
         }
@@ -43,6 +49,7 @@ namespace Arbor.ProjectCleanup
                     {
                         currentFile.Delete();
                     }
+
                     logger?.Invoke($"Deleted file '{currentFile.FullName}'");
                 }
                 catch (Exception ex)
@@ -51,6 +58,7 @@ namespace Arbor.ProjectCleanup
                     throw;
                 }
             }
+
             try
             {
                 if (!whatIf)
