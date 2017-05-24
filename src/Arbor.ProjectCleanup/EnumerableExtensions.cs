@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Arbor.ProjectCleanup
 {
-    public static class EnumerableExtensions
+    internal static class EnumerableExtensions
     {
         public static ImmutableArray<T> SafeToImmutableArray<T>(this IEnumerable<T> enumerable)
         {
@@ -15,7 +15,7 @@ namespace Arbor.ProjectCleanup
 
             if (enumerable is ImmutableArray<T>)
             {
-                return (ImmutableArray<T>) enumerable;
+                return (ImmutableArray<T>)enumerable;
             }
 
             return enumerable.ToImmutableArray();

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
@@ -8,14 +7,61 @@ namespace Arbor.ProjectCleanup
 {
     public static class DirectoryExtensions
     {
-        public static ImmutableArray<DirectoryInfo> GetSubDirectories(this DirectoryInfo dir, SearchOption searchOption, params string[] names)
+        public static ImmutableArray<DirectoryInfo> GetSubDirectories(
+            this DirectoryInfo dir,
+            SearchOption searchOption,
+            params string[] names)
         {
             if (names == null)
+            {
                 throw new ArgumentNullException(nameof(names));
+            }
 
-            ImmutableArray<DirectoryInfo> subDirectories = names.SelectMany(name => dir.GetDirectories(name, searchOption: searchOption)).ToImmutableArray();
+            ImmutableArray<DirectoryInfo> subDirectories = names
+                .SelectMany(name => dir.GetDirectories(name, searchOption)).ToImmutableArray();
 
             return subDirectories;
+        }
+
+        public static void DeleteEmptyDirectoriesRecursive(
+            this DirectoryInfo currentDirectory,
+            Logger logger = null,
+            bool whatIf = false)
+        {
+            if (currentDirectory == null)
+            {
+                return;
+            }
+
+            foreach (DirectoryInfo subDirectory in currentDirectory.GetDirectories())
+            {
+                subDirectory.DeleteEmptyDirectoriesRecursive(logger, whatIf);
+            }
+
+            if (currentDirectory.EnumerateFiles().Any())
+            {
+                return;
+            }
+
+            if (currentDirectory.EnumerateDirectories().Any())
+            {
+                return;
+            }
+
+            try
+            {
+                if (!whatIf)
+                {
+                    currentDirectory.Delete(false);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger?.Invoke($"Could not delete directory '{currentDirectory.FullName}', exception {ex}");
+                throw;
+            }
+
+            logger?.Invoke($"Deleted empty directory '{currentDirectory.FullName}'");
         }
 
         public static void DeleteRecursive(
@@ -35,7 +81,7 @@ namespace Arbor.ProjectCleanup
 
             foreach (FileInfo currentFile in currentDiretory.GetFiles().OrderBy(file => file.Name))
             {
-                logger?.Invoke($"Deleting file '{currentFile.FullName}'");
+                logger?.Invoke($"Deleting file.... '{currentFile.FullName}'");
 
                 try
                 {
@@ -43,7 +89,8 @@ namespace Arbor.ProjectCleanup
                     {
                         currentFile.Delete();
                     }
-                    logger?.Invoke($"Deleted file '{currentFile.FullName}'");
+
+                    logger?.Invoke($"Deleted file..... '{currentFile.FullName}'");
                 }
                 catch (Exception ex)
                 {
@@ -51,11 +98,12 @@ namespace Arbor.ProjectCleanup
                     throw;
                 }
             }
+
             try
             {
                 if (!whatIf)
                 {
-                    currentDiretory.Delete(recursive: true);
+                    currentDiretory.Delete(true);
                 }
             }
             catch (Exception ex)

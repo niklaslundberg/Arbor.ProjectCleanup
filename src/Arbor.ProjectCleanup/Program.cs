@@ -1,12 +1,10 @@
-﻿using System.Text;
-
-namespace Arbor.ProjectCleanup
+﻿namespace Arbor.ProjectCleanup
 {
-    class Program
+    internal class Program
     {
-        static int Main(string[] args)
+        private static int Main(string[] args)
         {
-            ExitCode exitCode = App.RunAsync(args.Add(ConfigurationKeys.WhatIf).SafeToImmutableArray()).Result;
+            ExitCode exitCode = App.RunAsync(args.SafeToImmutableArray()).Result;
 
             return exitCode.Result;
         }

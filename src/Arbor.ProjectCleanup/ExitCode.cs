@@ -6,11 +6,13 @@ namespace Arbor.ProjectCleanup
 
         public static readonly ExitCode Success = new ExitCode(0);
 
-        public int Result { get; }
-
         public ExitCode(int result)
         {
             Result = result;
         }
+
+        public int Result { get; }
+
+        public bool IsSuccess => Result == 0;
     }
 }
