@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<RuleSet Name="Rules for Arbor" Description="Code analysis rules for Arbox" ToolsVersion="15.0">
+<RuleSet Name="Rules for Arbor" Description="Code analysis rules for Arbox" ToolsVersion="14.0">
   <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
     <Rule Id="CA1001" Action="Warning" />
     <Rule Id="CA1009" Action="Warning" />
@@ -98,6 +98,5 @@
     <Rule Id="RCS1075" Action="None" />
     <Rule Id="RCS1102" Action="None" />
     <Rule Id="RCS1090" Action="None" />
-    <Rule Id="RCS1080" Action="None" />
   </Rules>
 </RuleSet>

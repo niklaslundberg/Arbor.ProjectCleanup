@@ -1,3 +1,5 @@
+using System;
+
 namespace Arbor.ProjectCleanup
 {
     public class ExitCode
@@ -8,6 +10,11 @@ namespace Arbor.ProjectCleanup
 
         public ExitCode(int result)
         {
+            if (result < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(result));
+            }
+
             Result = result;
         }
 

@@ -18,7 +18,8 @@ namespace Arbor.ProjectCleanup
             }
 
             ImmutableArray<DirectoryInfo> subDirectories = names
-                .SelectMany(name => dir.GetDirectories(name, searchOption)).ToImmutableArray();
+                .SelectMany(name => dir.GetDirectories(name, searchOption))
+                .ToImmutableArray();
 
             return subDirectories;
         }

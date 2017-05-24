@@ -2,6 +2,7 @@ using System;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Arbor.Aesculus.Core;
 using Autofac;
@@ -44,10 +45,13 @@ namespace Arbor.ProjectCleanup
         private async Task<ExitCode> ExecuteAsync(ImmutableArray<string> args)
         {
             bool whatIf = args.Any(arg => arg.Equals(ConfigurationKeys.WhatIf, StringComparison.OrdinalIgnoreCase));
+
             bool deleteEmptyDirectories = args.Any(arg => arg.Equals(
                 ConfigurationKeys.DeleteEmptyDirectories,
                 StringComparison.OrdinalIgnoreCase));
+
             ImmutableArray<string> exclusions = new[] { ".git", ".vs" }.ToImmutableArray();
+
             ImmutableArray<string> targets = new[] { "obj", "bin", "temp", "tmp", "artifacts", "arbor.x" }
                 .ToImmutableArray();
 
@@ -133,6 +137,32 @@ namespace Arbor.ProjectCleanup
             }
 
             return ExitCode.Success;
+        }
+
+        private void TryDeleteRecursiveWithRetry(DirectoryInfo tempDirectory, bool whatIf)
+        {
+            const int retryTimeoutInMilliseconds = 10;
+
+            int maxAttempts = 5;
+
+            for (int i = 0; i < maxAttempts; i++)
+            {
+                try
+                {
+                    tempDirectory.DeleteRecursive(_logger, whatIf);
+                }
+                catch (Exception innerEx)
+                {
+                    if (i == maxAttempts - 1)
+                    {
+                        throw;
+                    }
+
+                    _logger?.Invoke($"Exception thrown, trying again {innerEx.Message}");
+
+                    Thread.Sleep(retryTimeoutInMilliseconds);
+                }
+            }
         }
     }
 }
